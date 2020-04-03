@@ -1,4 +1,4 @@
-﻿const fs = require("fs");
+const fs = require("fs");
 const path = require("path");
 const addon = require('bindings')('voice-recognition');
 const { Worker } = require("worker_threads");
@@ -10,18 +10,18 @@ class VoiceRecognizer extends events {
 		super();
 
 		this.sameThread = false;
-		this.continuos = true;
+		this.continuous = true;
 
 		this._worker = null;
-		this._stoped = true;
-		this._setedFunction = false;
+		this._stopped = true;
+		this._setFunction = false;
 		this._isConstructed = true;
 
-		let installeds = this.installed_cultures();
+		let installed = this.installed_cultures();
 
 		if( !addon.constructorJS( culture )) {
 			this._isConstructed = false;
-			console.error( "[voice-recognition]: Culture [" + culture + "] is not installed on the device. Installed: " + JSON.stringify(installeds));
+			console.error( "[voice-recognition]: Culture [" + culture + "] is not installed on the device. Installed: " + JSON.stringify(installed));
 		}
 	}
 
@@ -46,7 +46,7 @@ class VoiceRecognizer extends events {
 		if( this.sameThread ) {
 			this._set_function_emit();
 
-			this._stoped = false;
+			this._stopped = false;
 
 			setImmediate(() => {
 				addon.listen();
@@ -56,7 +56,7 @@ class VoiceRecognizer extends events {
 
 			this._worker.postMessage({
 				listen: true,
-				continuos: this.continuos
+				continuous: this.continuous
 			});
 
 			this._worker.on( "message", response => {
@@ -183,7 +183,7 @@ class VoiceRecognizer extends events {
 		}
 
 		if( this.sameThread ) {
-			this._stoped = true;
+			this._stopped = true;
 		} else {
 			this._worker.terminate().
 				then(() => {
@@ -246,14 +246,14 @@ class VoiceRecognizer extends events {
 	 */
 	_set_function_emit()
 	{
-		if( this._setedFunction ) {
+		if( this._setFunction ) {
 			return;
 		}
 		
 		// Le enviamos al addon el emiter
 
 		addon.result_function(this._get_result.bind(this));
-		this._setedFunction = true;
+		this._setFunction = true;
 	}
 
 	/**
@@ -380,7 +380,7 @@ class VoiceRecognizer extends events {
 
 		this.emit("vc:recognized", response );
 
-		if( this.sameThread && this.continuos && !this._stoped ) {
+		if( this.sameThread && this.continuous && !this._stopped ) {
 			this.listen();
 		}
 	}
@@ -414,7 +414,7 @@ class VoiceRecognizer extends events {
 
 		this.emit("vc:rejected", response );
 
-		if( this.sameThread && this.continuos && !this._stoped ) {
+		if( this.sameThread && this.continuous && !this._stopped ) {
 			this.listen();
 		}
 	}
