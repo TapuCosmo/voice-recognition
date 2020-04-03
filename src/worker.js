@@ -5,7 +5,7 @@ class WorkerVc
 {
 	constructor()
 	{
-		this.continuos = true;
+		this.continuous = true;
 
 		// We send the addon the response function
 
@@ -43,7 +43,7 @@ class WorkerVc
 		
 		parentPort.postMessage( response );
 
-		if( this.continuos && ( evName == "vc:recognized" || evName == "vc:rejected" )) {
+		if( this.continuous && ( evName == "vc:recognized" || evName == "vc:rejected" )) {
 			this._listen();
 		}
 	}
@@ -52,8 +52,8 @@ class WorkerVc
 const worker = new WorkerVc();
 
 parentPort.on( "message", response => {
-	if( response.continuos != undefined ) {
-		worker.continuos = response.continuos;
+	if( response.continuous != undefined ) {
+		worker.continuous = response.continuous;
 	}
 
 	if( response.listen != undefined ) {
