@@ -5,12 +5,12 @@ const { Worker } = require("worker_threads");
 const events = require( "events" ).EventEmitter;
 
 class VoiceRecognizer extends events {
-	constructor( culture = "" ) 
+	constructor( culture = "", { sameThread = false, continuous = true } ) 
 	{
 		super();
 
-		this.sameThread = false;
-		this.continuous = true;
+		this.sameThread = sameThread;
+		this.continuous = continuous;
 
 		this._worker = null;
 		this._stopped = true;
